@@ -1,29 +1,56 @@
 # Recursive Algorithms in Java
 
-پروژهٔ درس طراحی و تحلیل الگوریتم‌ها. هر الگوریتم در یک کلاس مستقل پیاده‌سازی شده است و متد `main` آن یک نمونهٔ ثابت را اجرا می‌کند. پروژه فقط از کتابخانهٔ استاندارد جاوا استفاده می‌کند.
+This is my project for the **Design and Analysis of Algorithms** course. In this project, I implemented six different algorithms using recursion in Java.
 
-## پیچیدگی الگوریتم‌ها
+Each algorithm has its own Java class and a `main` method to test it with a simple example. I only used standard Java libraries.
 
-در سه الگوریتم آرایه‌ای، $n$ تعداد عناصر بازهٔ جاری است. در فاکتوریل و فیبوناچی، $n$ ورودی عددی است و در برج هانوی تعداد دیسک‌هاست. فضای کمکی شامل پشتهٔ بازگشت است. روابط زمانی با فرض هزینهٔ ثابت برای عملیات پایه و چاپ هر حرکت نوشته شده‌اند.
+## Algorithms Included
 
-| الگوریتم | رابطهٔ بازگشتی زمان | زمان | فضای کمکی |
-|---|---|---|---|
-| جست‌وجوی دودویی | $T(n)=T(\lfloor n/2\rfloor)+\Theta(1)$ در بدترین حالت | بدترین $\Theta(\log n)$، بهترین $\Theta(1)$ | بدترین $\Theta(\log n)$ |
-| بیشینهٔ بازگشتی | $T(n)=T(\lfloor n/2\rfloor)+T(\lceil n/2\rceil)+\Theta(1)$ | $\Theta(n)$ | $\Theta(\log n)$ |
-| مرتب‌سازی ادغامی | $T(n)=T(\lfloor n/2\rfloor)+T(\lceil n/2\rceil)+\Theta(n)$ | $\Theta(n\log n)$ | $\Theta(n)$ |
-| فاکتوریل | $T(n)=T(n-1)+\Theta(1)$ | $\Theta(n)$ | $\Theta(n)$ |
-| فیبوناچی ساده | $T(n)=T(n-1)+T(n-2)+\Theta(1)$ | $\Theta(\varphi^n)$، $\varphi=(1+\sqrt{5})/2$ | $\Theta(n)$ |
-| برج هانوی | $T(n)=2T(n-1)+\Theta(1)$ | $\Theta(2^n)$ | $\Theta(n)$ |
+The project contains the following algorithms:
 
-هزینهٔ حالت‌های پایه ثابت است. مرتبه‌های جدول رفتار الگوریتم‌ها را با رشد ورودی در مدل تحلیل نشان می‌دهند. محدودیت نوع دادهٔ `long` در بخش‌های مربوط آمده است.
+1. Binary Search
+2. Recursive Maximum
+3. Merge Sort
+4. Factorial
+5. Fibonacci
+6. Tower of Hanoi
 
-## کامپایل و اجرا
+## Time and Space Complexity
 
-با JDK 8 یا بالاتر، از ریشهٔ پروژه دستورهای زیر را اجرا کنید. ابتدا پوشهٔ خروجی را بسازید. اگر از قبل وجود دارد، خط اول را رد کنید.
+In the first three algorithms, `n` represents the number of elements in the current array range. For Factorial and Fibonacci, `n` is the input number. For Tower of Hanoi, `n` is the number of disks.
 
-```sh
+| Algorithm | Time Complexity | Auxiliary Space |
+|---|---|---|
+| Binary Search | O(log n) | O(log n) |
+| Recursive Maximum | O(n) | O(log n) |
+| Merge Sort | O(n log n) | O(n) |
+| Factorial | O(n) | O(n) |
+| Fibonacci | O(φⁿ) | O(n) |
+| Tower of Hanoi | O(2ⁿ) | O(n) |
+
+Here, `φ` is the golden ratio:
+
+`φ = (1 + √5) / 2`
+
+## How to Run the Project
+
+You need JDK 8 or a newer version to compile and run this project.
+
+First, open the terminal in the project folder and create an output directory:
+
+```bash
 mkdir out
+```
+
+Then compile all Java files:
+
+```bash
 javac -encoding UTF-8 -d out src/BinarySearch.java src/RecursiveMaximum.java src/MergeSort.java src/Factorial.java src/Fibonacci.java src/TowerOfHanoi.java
+```
+
+After compiling, you can run each algorithm separately:
+
+```bash
 java -cp out BinarySearch
 java -cp out RecursiveMaximum
 java -cp out MergeSort
@@ -32,112 +59,154 @@ java -cp out Fibonacci
 java -cp out TowerOfHanoi
 ```
 
-## ۱. جست‌وجوی دودویی
+## 1. Binary Search
 
-ورودی یک آرایهٔ مرتب‌شده به ترتیب صعودی است. ابتدا عنصر میانی را بررسی می‌کنیم. اگر هدف کوچک‌تر باشد، در نیمهٔ چپ و اگر بزرگ‌تر باشد، در نیمهٔ راست جست‌وجو می‌کنیم. بازهٔ خالی مقدار `-1` برمی‌گرداند. اندیس‌ها از صفر شروع می‌شوند و اگر هدف تکراری باشد، یکی از رخدادهای آن برگردانده می‌شود. در بدترین حالت پس از $k$ گام، اندازهٔ بازه حداکثر $n/2^k$ است. بنابراین تعداد گام‌ها لگاریتمی است.
+Binary Search is used to find an element in a sorted array.
 
-```text
-SEARCH(A, target, left, right):
-    if left > right: return -1
-    mid = left + floor((right - left) / 2)
-    if A[mid] == target: return mid
-    if target < A[mid]: return SEARCH(A, target, left, mid - 1)
-    return SEARCH(A, target, mid + 1, right)
-```
+Instead of checking every element, the algorithm checks the middle element and decides which half should be searched next.
 
-**نمونه** — جست‌وجوی ۱۱ و سپس ۶ در آرایهٔ `[2, 4, 7, 11, 15]`، به‌ترتیب `3` و `-1` را در دو خط چاپ می‌کند.
+- If the target is equal to the middle element, its index is returned.
+- If the target is smaller, the left half is searched.
+- If the target is larger, the right half is searched.
+- If the element does not exist, the method returns `-1`.
 
-## ۲. بیشینهٔ بازگشتی
+**Example:**
 
-آرایه باید دست‌کم یک عنصر داشته باشد. هر بازه به دو نیمه تقسیم می‌شود و بیشینهٔ کل از مقایسهٔ بیشینهٔ دو نیمه به دست می‌آید. حالت پایه، بازهٔ تک‌عنصری است. درخت بازگشت $n$ برگ و $n-1$ گره داخلی دارد، پس دقیقاً $n-1$ مقایسهٔ عناصر انجام می‌شود.
+Array: `[2, 4, 7, 11, 15]`
 
-```text
-MAXIMUM(A, left, right):
-    if left == right: return A[left]
-    mid = left + floor((right - left) / 2)
-    x = MAXIMUM(A, left, mid)
-    y = MAXIMUM(A, mid + 1, right)
-    return max(x, y)
-```
+Searching for `11` returns index `3`.
 
-**نمونه** — خروجی برای `[-8, -3, -12, -1, -5]` برابر `-1` است.
+Searching for `6` returns `-1`.
 
-## ۳. مرتب‌سازی ادغامی
+**Complexity:**
+- Best case: O(1)
+- Worst case: O(log n)
+- Auxiliary space: O(log n)
 
-ابتدا هر نیمه را بازگشتی مرتب می‌کنیم. سپس با دو اشاره‌گر، هر بار کوچک‌ترین عنصر باقی‌مانده را در آرایهٔ کمکی می‌گذاریم و نتیجه را به بازهٔ اصلی برمی‌گردانیم. در حالت برابری، عنصر سمت چپ زودتر انتخاب می‌شود. آرایهٔ کمکی یک بار ساخته می‌شود و همهٔ فراخوانی‌ها از آن استفاده می‌کنند. مجموع هزینهٔ ادغام در هر سطح خطی است و تعداد سطوح لگاریتمی است.
+## 2. Recursive Maximum
 
-```text
-SORT(A):
-    B = new array of length A.length
-    SORT_RANGE(A, B, 0, A.length - 1)
+This algorithm finds the largest number in an array using recursion.
 
-SORT_RANGE(A, B, left, right):
-    if left >= right: return
-    mid = left + floor((right - left) / 2)
-    SORT_RANGE(A, B, left, mid)
-    SORT_RANGE(A, B, mid + 1, right)
-    i = left, j = mid + 1, k = left
-    while i <= mid and j <= right:
-        if A[i] <= A[j]:
-            B[k] = A[i]
-            i = i + 1
-        else:
-            B[k] = A[j]
-            j = j + 1
-        k = k + 1
-    append the remaining elements of the nonempty half to B starting at k
-    copy B[left..right] back to A[left..right]
-```
+It divides the array into two smaller parts, finds the maximum value in each part, and compares their results.
 
-**نمونه** — ورودی `[9, 3, 7, 3, -2]` به `[-2, 3, 3, 7, 9]` تبدیل می‌شود.
+The process continues until each part contains only one element.
 
-## ۴. فاکتوریل
+**Example:**
 
-از رابطهٔ $n!=n(n-1)!$ با حالت‌های پایهٔ $0!=1!=1$ استفاده می‌کنیم. هر فراخوانی مقدار ورودی را یک واحد کاهش می‌دهد، بنابراین تعداد فراخوانی‌ها خطی است. متد بازهٔ ۰ تا ۲۰ را می‌پذیرد، چون $21!$ از بیشینهٔ `long` جاوا بزرگ‌تر است.
+Array: `[-8, -3, -12, -1, -5]`
 
-```text
-FACTORIAL(n):
-    if n < 0 or n > 20: raise an error
-    if n <= 1: return 1
-    return n * FACTORIAL(n - 1)
-```
+Result: `-1`
 
-**نمونه** — `factorial(5)` مقدار `120` را برمی‌گرداند.
+**Complexity:**
+- Time: O(n)
+- Auxiliary space: O(log n)
 
-## ۵. فیبوناچی
+## 3. Merge Sort
 
-با $F_0=0$ و $F_1=1$ شروع می‌کنیم و از $F_n=F_{n-1}+F_{n-2}$ استفاده می‌کنیم. نسخهٔ ساده زیرمسئله‌های مشترک را چندبار محاسبه می‌کند. تعداد کل فراخوانی‌ها $2F_{n+1}-1$ است و با مرتبهٔ $\Theta(\varphi^n)$ رشد می‌کند. بازهٔ قابل نمایش در `long` از ۰ تا ۹۲ است، اما برای اجرای این نسخه باید از ورودی‌های کوچک استفاده کرد.
+Merge Sort is a sorting algorithm based on the divide-and-conquer technique.
 
-```text
-FIBONACCI(n):
-    if n < 0 or n > 92: raise an error
-    if n <= 1: return n
-    return FIBONACCI(n - 1) + FIBONACCI(n - 2)
-```
+It divides the array into two halves, sorts each half recursively, and then merges the two sorted parts into one sorted array.
 
-**نمونه** — `fibonacci(10)` مقدار `55` را برمی‌گرداند.
+The algorithm uses an additional array to help with merging.
 
-## ۶. برج هانوی
+**Example:**
 
-سه میلهٔ متمایز داریم. هر حرکت فقط یک دیسک را جابه‌جا می‌کند و دیسک بزرگ‌تر روی دیسک کوچک‌تر قرار نمی‌گیرد. ابتدا $n-1$ دیسک را از مبدأ به میلهٔ کمکی می‌بریم، سپس بزرگ‌ترین دیسک را به مقصد می‌بریم و در پایان $n-1$ دیسک را از میلهٔ کمکی به مقصد منتقل می‌کنیم. تعداد حرکت‌ها از رابطهٔ $M(n)=2M(n-1)+1$ و $M(0)=0$ به دست می‌آید و برابر $2^n-1$ است. حرکت‌ها مستقیماً چاپ می‌شوند.
+Before sorting:
 
-```text
-HANOI(n, source, auxiliary, destination):
-    if n < 0: raise an error
-    if n == 0: return
-    HANOI(n - 1, source, destination, auxiliary)
-    print move disk n from source to destination
-    HANOI(n - 1, auxiliary, source, destination)
-```
+`[9, 3, 7, 3, -2]`
 
-**نمونه** — برای انتقال سه دیسک از A به C با کمک B، خروجی برنامه چنین است.
+After sorting:
 
-```text
-Move disk 1: A -> C
-Move disk 2: A -> B
-Move disk 1: C -> B
-Move disk 3: A -> C
-Move disk 1: B -> A
-Move disk 2: B -> C
-Move disk 1: A -> C
-```
+`[-2, 3, 3, 7, 9]`
+
+**Complexity:**
+- Time: O(n log n)
+- Auxiliary space: O(n)
+
+## 4. Factorial
+
+Factorial calculates the product of all positive integers from 1 to a given number.
+
+The recursive formula is:
+
+`n! = n * (n - 1)!`
+
+The base cases are:
+
+`0! = 1`
+
+`1! = 1`
+
+**Example:**
+
+`factorial(5) = 120`
+
+The implementation accepts numbers between 0 and 20 because larger factorial values cannot fit in Java's `long` data type.
+
+**Complexity:**
+- Time: O(n)
+- Auxiliary space: O(n)
+
+## 5. Fibonacci
+
+The Fibonacci algorithm calculates a number in the Fibonacci sequence.
+
+Each number is the sum of the previous two numbers.
+
+The sequence starts with:
+
+`0, 1, 1, 2, 3, 5, 8, 13, ...`
+
+The recursive formula is:
+
+`F(n) = F(n - 1) + F(n - 2)`
+
+The base cases are `F(0) = 0` and `F(1) = 1`.
+
+This implementation uses simple recursion, so it calculates some values multiple times. Because of this, it becomes very slow for large inputs.
+
+**Example:**
+
+`fibonacci(10) = 55`
+
+The accepted input range is 0 to 92 because the result must fit in a Java `long`.
+
+**Complexity:**
+- Time: O(φⁿ)
+- Auxiliary space: O(n)
+
+## 6. Tower of Hanoi
+
+Tower of Hanoi is a recursive problem with three rods and a number of disks.
+
+The goal is to move all disks from the source rod to the destination rod.
+
+There are three main rules:
+
+1. Only one disk can be moved at a time.
+2. Only the top disk of a rod can be moved.
+3. A larger disk cannot be placed on a smaller disk.
+
+The algorithm works by moving the smaller disks to the auxiliary rod, moving the largest disk to the destination, and then moving the smaller disks onto it.
+
+The number of moves is:
+
+`M(n) = 2^n - 1`
+
+**Example:**
+
+Moving 3 disks from rod A to rod C using rod B requires 7 moves.
+
+**Complexity:**
+- Time: O(2ⁿ)
+- Auxiliary space: O(n)
+
+---
+
+## Notes
+
+- All algorithms are implemented using recursion.
+- Each algorithm has its own Java class.
+- The examples are included in the `main` methods.
+- Only standard Java libraries are used.
+- The project is intended for learning and understanding recursive algorithms and their complexity.

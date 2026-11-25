@@ -40,20 +40,14 @@ First, open the terminal in the project folder and create an output directory:
 
 ```bash
 mkdir out
-
 javac -encoding UTF-8 -d out *.java
-```
 
-After compiling, you can run each algorithm separately:
-
-```bash
 java -cp out BinarySearch
 java -cp out RecursiveMaximum
 java -cp out MergeSort
 java -cp out Factorial
 java -cp out Fibonacci
 java -cp out TowerOfHanoi
-```
 
 ## 1. Binary Search
 

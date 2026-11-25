@@ -40,12 +40,8 @@ First, open the terminal in the project folder and create an output directory:
 
 ```bash
 mkdir out
-```
 
-Then compile all Java files:
-
-```bash
-javac -encoding UTF-8 -d out src/BinarySearch.java src/RecursiveMaximum.java src/MergeSort.java src/Factorial.java src/Fibonacci.java src/TowerOfHanoi.java
+javac -encoding UTF-8 -d out *.java
 ```
 
 After compiling, you can run each algorithm separately:
